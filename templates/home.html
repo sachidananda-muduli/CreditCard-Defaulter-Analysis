@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Card Default Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background: #555;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Credit Card Default Prediction</h1>
+        <form id="predictionForm" action="/predictdata" method="POST">
+            <div class="form-group">
+                <label for="limit_bal">Credit Limit:</label>
+                <input type="number" id="limit_bal" name="limit_bal" required step="1">
+            </div>
+            <div class="form-group">
+                <label for="sex">Sex:</label>
+                <select id="sex" name="sex" required>
+                    <option value="1">Male</option>
+                    <option value="2">Female</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="education">Education:</label>
+                <select id="education" name="education" required>
+                    <option value="1">Graduate School</option>
+                    <option value="2">University</option>
+                    <option value="3">High School</option>
+                    <option value="4">Others</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="marriage">Marital Status:</label>
+                <select id="marriage" name="marriage" required>
+                    <option value="1">Married</option>
+                    <option value="2">Single</option>
+                    <option value="3">Others</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required step="1">
+            </div>
+            {% for i in range(1, 7) %}
+            <div class="form-group">
+                <label for="pay_{{ i }}">Repayment Status Month {{ i }}:</label>
+                <input type="number" id="pay_{{ i }}" name="pay_{{ i }}" required step="1">
+            </div>
+            {% endfor %}
+            {% for i in range(1, 7) %}
+            <div class="form-group">
+                <label for="bill_amt{{ i }}">Bill Amount Month {{ i }}:</label>
+                <input type="number" id="bill_amt{{ i }}" name="bill_amt{{ i }}" required step="1">
+            </div>
+            {% endfor %}
+            {% for i in range(1, 7) %}
+            <div class="form-group">
+                <label for="pay_amt{{ i }}">Payment Amount Month {{ i }}:</label>
+                <input type="number" id="pay_amt{{ i }}" name="pay_amt{{ i }}" required step="1">
+            </div>
+            {% endfor %}
+            <input type="submit" value="Predict">
+        </form>
+        <h2 id="predictionResult">{{ prediction_result }}</h2>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('#predictionForm').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/predictdata',
+                    type: 'post',
+                    data: $('#predictionForm').serialize(),
+                    success: function(response) {
+                        $('#predictionResult').text('Prediction Result: ' + response.prediction_result);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
